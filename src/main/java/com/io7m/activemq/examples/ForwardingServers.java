@@ -87,6 +87,8 @@ public final class ForwardingServers
     final StaticNetworkConnector connector =
       new StaticNetworkConnector(URI.create("static:(" + RECEIVER_BROKER_URI + ")"));
     connector.setStaticBridge(true);
+    connector.setConduitSubscriptions(true);
+    connector.setDuplex(true);
 
     final ActiveMQTopic topic = new ActiveMQTopic(">");
     final ArrayList<ActiveMQDestination> destinations = new ArrayList<>();
