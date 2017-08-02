@@ -94,6 +94,7 @@ public final class ForwardingServers
     final ArrayList<ActiveMQDestination> destinations = new ArrayList<>();
     destinations.add(topic);
     connector.setStaticallyIncludedDestinations(destinations);
+    connector.start();
 
     service.addNetworkConnector(connector);
     service.setPersistenceAdapter(new MemoryPersistenceAdapter());
