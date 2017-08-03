@@ -5,8 +5,12 @@ import org.apache.activemq.Message;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQDestination;
 import org.apache.activemq.command.ActiveMQTopic;
+import org.apache.activemq.command.DiscoveryEvent;
+import org.apache.activemq.network.DiscoveryNetworkConnector;
 import org.apache.activemq.network.NetworkConnector;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
+import org.apache.activemq.transport.discovery.DiscoveryListener;
+import org.apache.activemq.transport.discovery.simple.SimpleDiscoveryAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,8 +88,8 @@ public final class ForwardingServers
     service.setDataDirectory("/tmp/broker-proxy");
     service.setUseJmx(true);
 
-    final StaticNetworkConnector connector =
-      new StaticNetworkConnector(URI.create("static:(" + RECEIVER_BROKER_URI + ")"));
+    final DiscoveryNetworkConnector connector =
+      new DiscoveryNetworkConnector(URI.create("static:(" + RECEIVER_BROKER_URI + ")"));
     connector.setStaticBridge(true);
     connector.setConduitSubscriptions(true);
     connector.setDuplex(true);
@@ -94,7 +98,6 @@ public final class ForwardingServers
     final ArrayList<ActiveMQDestination> destinations = new ArrayList<>();
     destinations.add(topic);
     connector.setStaticallyIncludedDestinations(destinations);
-    connector.start();
 
     service.addNetworkConnector(connector);
     service.setPersistenceAdapter(new MemoryPersistenceAdapter());
@@ -205,14 +208,5 @@ public final class ForwardingServers
     session.close();
     conn.close();
     return null;
-  }
-
-  private static final class StaticNetworkConnector extends NetworkConnector
-  {
-    public StaticNetworkConnector(
-      final URI uri)
-    {
-      super(uri);
-    }
   }
 }
